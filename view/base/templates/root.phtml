@@ -1,0 +1,33 @@
+<?php
+/**
+ * @package Goomento_Core
+ * @link https://github.com/Goomento/Core
+ */
+
+declare(strict_types=1);
+
+use Goomento\Core\Helper\Hooks;
+?>
+<!doctype html>
+<html <?= /* @noEscape */ $htmlAttributes ?>>
+    <head <?= /* @noEscape */ $headAttributes ?>>
+        <?= /* @noEscape */ $requireJs ?>
+        <?= /* @noEscape */ $headContent ?>
+        <?= /* @noEscape */ $headAdditional ?>
+        <?php
+        if (!Hooks::didAction('header')) {
+            Hooks::doAction('header');
+        }
+        ?>
+    </head>
+    <body data-container="body"
+          data-mage-init='{"loaderAjax": {}, "loader": { "icon": "<?= /* @noEscape */ $loaderIcon ?>"}}'
+        <?= /* @noEscape */ $bodyAttributes ?>>
+        <?= /* @noEscape */ $layoutContent ?>
+        <?php
+        if (!Hooks::didAction('footer')) {
+            Hooks::doAction('footer');
+        }
+        ?>
+    </body>
+</html>

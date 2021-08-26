@@ -1,0 +1,13 @@
+<?php
+/**
+ * @package Goomento_Core
+ * @link https://github.com/Goomento/Core
+ */
+
+declare(strict_types=1);
+
+use Goomento\Core\Helper\Hooks;
+
+if (!Hooks::didAction('footer')) {
+    Hooks::doAction('footer');
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @package Goomento_Core
+ * @link https://github.com/Goomento/Core
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Goomento_Core::menu" title="Goomento" />
+            </resource>
+        </resources>
+    </acl>
+</config>

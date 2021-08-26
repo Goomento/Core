@@ -1,0 +1,30 @@
+{
+    "name": "goomento/module-core",
+    "description": "Magento 2 Goomento Core module",
+    "type": "magento2-module",
+    "version": "1.0.0",
+    "license": [
+        "OSL-3.0"
+    ],
+    "homepage": "https://goomento.com",
+    "authors": [
+        {
+            "name": "Goomento",
+            "homepage": "https://goomento.com",
+            "role": "Developer Team"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Goomento\\Core\\": ""
+        }
+    },
+    "require": {
+        "php": "~7.1.0||~7.2.0||~7.3.0||~7.4.0",
+        "magento/framework": "~102.0.0||~103.0.0"
+    },
+    "minimum-stability": "dev"
+}

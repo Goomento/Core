@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @package Goomento_Core
+ * @link https://github.com/Goomento/Core
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="goomento" translate="label" sortOrder="2021" class="goomento-class-tab">
+            <label>Goomento</label>
+        </tab>
+    </system>
+</config>
