@@ -108,19 +108,16 @@ class SubSystem implements SubSystemInterface
         $scopes = array_flip($scopes);
         $currentState = $this->stateHelper->getAreaCode();
         $fullActionName = $this->request->getFullActionName();
+        $isAjax = (bool) $this->request->isAjax();
 
         if (!empty($scopes)) {
             if (isset($scopes['*'])) {
                 return true;
+            } elseif ($isAjax && isset($scopes['ajax'])) {
+                return true;
             } elseif (in_array($currentState, ['adminhtml', 'frontend']) && isset($scopes[$currentState])) {
-                if ($this->request->isAjax()) {
-                    if (isset($scopes['ajax'])) {
-                        return true;
-                    }
-                } else {
-                    return true;
-                }
-            } elseif (isset($scopes[$fullActionName])) {
+                return true;
+            } elseif (isset($scopes[$fullActionName]))   {
                 return true;
             }
         }

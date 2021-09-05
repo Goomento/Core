@@ -207,7 +207,14 @@ class ScriptsManager extends AssetDependencies
 
         $tag  = $cond_before . $before_handle;
         if ($print) {
-            $tag .= sprintf("<script>require(['%s'])</script>", $handle);
+            $requireJs = [];
+            $depends = $obj['deps'];
+            if (!empty($depends)) {
+                $requireJs = $depends;
+            }
+            $requireJs[] = $handle;
+            $requireJs = implode('\',\'', $requireJs);
+            $tag .= sprintf("<script>require(['%s'])</script>", $requireJs);
         }
 
         $tag .= $after_handle . $cond_after;

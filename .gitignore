@@ -20,4 +20,4 @@ Thumbs.db
 *.wmv
 *.map
 .sass-cache
-dev
+build
