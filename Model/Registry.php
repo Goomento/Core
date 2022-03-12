@@ -8,10 +8,6 @@ declare(strict_types=1);
 
 namespace Goomento\Core\Model;
 
-/**
- * Class Registry
- * @package Goomento\Core\Model
- */
 class Registry
 {
     /**

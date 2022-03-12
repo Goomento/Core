@@ -8,10 +8,6 @@ declare(strict_types=1);
 
 namespace Goomento\Core\Model;
 
-/**
- * Class HookManager
- * @package Goomento\PageBuilder\Modules
- */
 class HookManager
 {
     /**

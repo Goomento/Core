@@ -14,10 +14,10 @@
         </arguments>
     </type>
     <type name="\Magento\Framework\App\ActionInterface">
-        <plugin name="goomento.preExecute" type="Goomento\Core\Plugin\App\ActionInterface\PreExecute" sortOrder="0" />
+        <plugin name="controllers.execute" type="Goomento\Core\Plugin\App\ActionInterface\ControllersExecute" sortOrder="0" />
     </type>
     <type name="Magento\Framework\App\Action\AbstractAction">
-        <plugin name="goomento.predispatch" type="Goomento\Core\Plugin\App\Action\AbstractAction\Predispatch" sortOrder="0" />
+        <plugin name="controllers.dispatch" type="Goomento\Core\Plugin\App\Action\AbstractAction\ControllersDispatch" sortOrder="0" />
     </type>
     <preference for="Goomento\Core\SubSystemInterface" type="Goomento\Core\SubSystem\Proxy" />
     <type name="Magento\Framework\View\Result\Page">

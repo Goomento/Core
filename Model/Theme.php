@@ -8,15 +8,11 @@ declare(strict_types=1);
 
 namespace Goomento\Core\Model;
 
-use Goomento\Core\Helper\Hooks;
+use Goomento\Core\Helper\HooksHelper;
 use Goomento\Core\Helper\State;
 use Goomento\Core\SubSystemInterface;
 use Magento\Framework\App\Request\Http;
 
-/**
- * Class Theme
- * @package Goomento\Core\Model
- */
 class Theme implements SubSystemInterface
 {
     const THEMING_PRIORITY = 9;
@@ -48,17 +44,17 @@ class Theme implements SubSystemInterface
         $areaCode = $this->stateHelper->getAreaCode();
 
         if ($request->isAjax()) {
-            Hooks::addAction('init', function () {
-                Hooks::doAction('ajax/init', self::THEMING_PRIORITY);
+            HooksHelper::addAction('init', function () {
+                HooksHelper::doAction('ajax/init', self::THEMING_PRIORITY);
             });
         }
 
-        Hooks::addAction('header', function () use ($areaCode) {
-            Hooks::doAction("header/{$areaCode}", self::THEMING_PRIORITY);
+        HooksHelper::addAction('header', function () use ($areaCode) {
+            HooksHelper::doAction("header/{$areaCode}", self::THEMING_PRIORITY);
         });
 
-        Hooks::addAction('footer', function () use ($areaCode) {
-            Hooks::doAction("footer/{$areaCode}", self::THEMING_PRIORITY);
+        HooksHelper::addAction('footer', function () use ($areaCode) {
+            HooksHelper::doAction("footer/{$areaCode}", self::THEMING_PRIORITY);
         });
     }
 

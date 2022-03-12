@@ -8,18 +8,15 @@ declare(strict_types=1);
 
 namespace Goomento\Core\Model;
 
+use Goomento\Core\Helper\HooksHelper;
 use Goomento\Core\SubSystemInterface;
 
-/**
- * Class Initializer
- * @package Goomento\Core\Model
- */
 class Initializer
 {
     /**
      * @var bool
      */
-    private $processed = false;
+    private $processing = null;
 
     /**
      * @var SubSystemInterface
@@ -37,21 +34,35 @@ class Initializer
     }
 
     /**
+     * Start processing the program
+     *
      * @param array $data
      */
-    public function execute(array $data) : void
+    public function processing(array $data) : void
     {
-        if (false === $this->processed) {
-            $this->processed  = true;
-            $this->_execute($data);
+        if (null === $this->processing) {
+            /**
+             * Use for hook into system
+             */
+            HooksHelper::doAction('core/start');
+
+            $this->processing  = true;
+            $this->subSystem->init($data);
         }
     }
 
     /**
-     * @param $data
+     * End processing the program
      */
-    private function _execute($data)
+    public function endProcessing(?array $data = null)
     {
-        $this->subSystem->init($data);
+        if ($this->processing === true) {
+            $this->processing = false;
+
+            /**
+             * Use for hook into system
+             */
+            HooksHelper::doAction('core/end', $data);
+        }
     }
 }

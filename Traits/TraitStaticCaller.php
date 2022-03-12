@@ -10,10 +10,6 @@ namespace Goomento\Core\Traits;
 
 use Magento\Framework\App\ObjectManager;
 
-/**
- * Trait TraitStaticCaller
- * @package Goomento\Core\Traits
- */
 trait TraitStaticCaller
 {
     /**
@@ -29,7 +25,7 @@ trait TraitStaticCaller
      */
     public static function __callStatic($name, $arguments)
     {
-        if (!self::$staticInstance = null) {
+        if (self::$staticInstance === null) {
             $instance = self::getStaticInstance();
             if (is_string($instance)) {
                 $objectManager = ObjectManager::getInstance();

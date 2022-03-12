@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Goomento\Core;
 
-use Goomento\Core\Helper\Hooks;
+use Goomento\Core\Helper\HooksHelper;
 use Goomento\Core\Helper\State;
 use Goomento\Core\Model\Registry;
 use Magento\Framework\App\ActionInterface;
@@ -16,10 +16,6 @@ use Magento\Framework\App\Request\Http;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManagerInterface;
 
-/**
- * Class SubSystem
- * @package Goomento\Core
- */
 class SubSystem implements SubSystemInterface
 {
     /**
@@ -71,7 +67,7 @@ class SubSystem implements SubSystemInterface
         /**
          * Construct the sub-system
          */
-        Hooks::doAction('construct');
+        HooksHelper::doAction('construct');
     }
 
     /**
@@ -94,7 +90,7 @@ class SubSystem implements SubSystemInterface
             }
         }
 
-        Hooks::doAction('init');
+        HooksHelper::doAction('init');
     }
 
     /**
@@ -155,6 +151,6 @@ class SubSystem implements SubSystemInterface
      */
     public function __destruct()
     {
-        Hooks::doAction('destruct');
+        HooksHelper::doAction('destruct');
     }
 }

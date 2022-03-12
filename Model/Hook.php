@@ -12,10 +12,6 @@ use ArrayAccess;
 use Iterator;
 use ReflectionFunction;
 
-/**
- * Class Hook
- * @package Goomento\Core\Modules
- */
 class Hook implements Iterator, ArrayAccess
 {
     /**

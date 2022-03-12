@@ -8,10 +8,6 @@ declare(strict_types=1);
 
 namespace Goomento\Core;
 
-/**
- * Interface SubSystemInterface
- * @package Goomento\Core
- */
 interface SubSystemInterface
 {
     /**

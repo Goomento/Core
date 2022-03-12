@@ -6,8 +6,8 @@
 
 declare(strict_types=1);
 
-use Goomento\Core\Helper\Hooks;
+use Goomento\Core\Helper\HooksHelper;
 
-if (!Hooks::didAction('header')) {
-    Hooks::doAction('header');
+if (!HooksHelper::didAction('header')) {
+    HooksHelper::doAction('header');
 }

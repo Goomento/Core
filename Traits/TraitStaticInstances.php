@@ -10,10 +10,6 @@ namespace Goomento\Core\Traits;
 
 use Magento\Framework\App\ObjectManager;
 
-/**
- * Trait TraitInstances
- * @package Goomento\Core\Traits
- */
 trait TraitStaticInstances
 {
     /**

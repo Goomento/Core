@@ -12,11 +12,7 @@ use Goomento\Core\Model\Initializer;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\RequestInterface;
 
-/**
- * Class PreExecute
- * @package Goomento\Core\Plugin\App\ActionInterface
- */
-class PreExecute
+class ControllersExecute
 {
     /**
      * @var Initializer
@@ -51,6 +47,24 @@ class PreExecute
             'controller_action' => $action,
             'request' => $this->request
         ];
-        $this->initializer->execute($data);
+        $this->initializer->processing($data);
+    }
+
+    /**
+     * @param ActionInterface $action
+     * @param $result
+     * @return mixed
+     */
+    public function afterExecute(
+        ActionInterface $action,
+        $result
+    )
+    {
+        $data = [
+            'controller_action' => $action,
+            'result' => $result
+        ];
+        $this->initializer->endProcessing($data);
+        return $result;
     }
 }

@@ -10,11 +10,7 @@ namespace Goomento\Core\Helper;
 
 use Goomento\Core\Traits\TraitStaticInstances;
 
-/**
- * Class ObjectManager
- * @package Goomento\Core\Helper
- */
-class ObjectManager
+class ObjectManagerHelper
 {
     use TraitStaticInstances;
 

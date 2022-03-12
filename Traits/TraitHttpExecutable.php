@@ -12,10 +12,6 @@ use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Exception\NotFoundException;
 
-/**
- * Trait TraitHttpExecutable
- * @package Goomento\Core\Traits
- */
 trait TraitHttpExecutable
 {
     /**

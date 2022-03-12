@@ -10,10 +10,6 @@ namespace Goomento\Core\Model;
 
 use Goomento\PageBuilder\Configuration;
 
-/**
- * Class ScriptsManager
- * @package Goomento\PageBuilder\Model
- */
 class ScriptsManager extends AssetDependencies
 {
     /**
@@ -110,6 +106,25 @@ class ScriptsManager extends AssetDependencies
         echo "</script>\n";
 
         return true;
+    }
+
+    /**
+     * Add handle to become dependency
+     *
+     * @param array|string $deps
+     * @param string $handle
+     * @return $this
+     */
+    public function addDeps($deps, string $handle)
+    {
+        if (isset($this->registered[ $handle ])) {
+            $obj = $this->registered[ $handle ];
+            $depends = (array) $obj['deps'];
+            $depends = array_merge($depends, (array) $deps);
+            $this->registered[ $handle ]['deps'] = array_unique($depends);
+        }
+
+        return $this;
     }
 
     /**

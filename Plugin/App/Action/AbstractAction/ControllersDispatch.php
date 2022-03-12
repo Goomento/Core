@@ -12,11 +12,7 @@ use Goomento\Core\Model\Initializer;
 use Magento\Framework\App\Action\AbstractAction;
 use Magento\Framework\App\RequestInterface;
 
-/**
- * Class Predispatch
- * @package Goomento\Core\Plugin\App\Action\AbstractAction
- */
-class Predispatch
+class ControllersDispatch
 {
     /**
      * @var Initializer
@@ -46,6 +42,24 @@ class Predispatch
             'controller_action' => $subject,
             'request' => $request
         ];
-        $this->initializer->execute($data);
+        $this->initializer->processing($data);
+    }
+
+    /**
+     * @param AbstractAction $subject
+     * @param $result
+     * @return mixed
+     */
+    public function afterDispatch(
+        AbstractAction $subject,
+        $result
+    )
+    {
+        $data = [
+            'controller_action' => $subject,
+            'result' => $result
+        ];
+        $this->initializer->endProcessing($data);
+        return $result;
     }
 }

@@ -11,11 +11,7 @@ namespace Goomento\Core\Helper;
 use Goomento\Core\Model\ScriptsManager;
 use Goomento\Core\Model\StylesManager;
 
-/**
- * Class Theme
- * @package Goomento\Core\Helper
- */
-class Theme
+class ThemeHelper
 {
     /**
      * @var ScriptsManager
@@ -33,7 +29,7 @@ class Theme
     {
         if (is_null(self::$scriptManager)) {
             /** @var ScriptsManager $scriptManager */
-            self::$scriptManager = ObjectManager::get(ScriptsManager::class);
+            self::$scriptManager = ObjectManagerHelper::get(ScriptsManager::class);
         }
 
         return self::$scriptManager;
@@ -46,7 +42,7 @@ class Theme
     {
         if (is_null(self::$stylesManager)) {
             /** @var StylesManager $stylesManager */
-            self::$stylesManager = ObjectManager::get(StylesManager::class);
+            self::$stylesManager = ObjectManagerHelper::get(StylesManager::class);
         }
 
         return self::$stylesManager;
@@ -219,5 +215,15 @@ class Theme
     public static function inlineStyle(string $handle, string $code): bool
     {
         return self::getStylesManager()->addInlineStyle($handle, $code);
+    }
+
+    /**
+     * @param string|array $deps
+     * @param string $handle
+     * @return ScriptsManager
+     */
+    public static function addDeps($deps, string $handle)
+    {
+        return self::getScriptsManager()->addDeps($deps, $handle);
     }
 }

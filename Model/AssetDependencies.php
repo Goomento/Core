@@ -8,11 +8,6 @@ declare(strict_types=1);
 
 namespace Goomento\Core\Model;
 
-/**
- * Class AssetDependencies
- *
- * @package Goomento\PageBuilder\Model
- */
 abstract class AssetDependencies
 {
     /**

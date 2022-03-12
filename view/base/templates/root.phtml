@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-use Goomento\Core\Helper\Hooks;
+use Goomento\Core\Helper\HooksHelper;
 ?>
 <!doctype html>
 <html <?= /* @noEscape */ $htmlAttributes ?>>
@@ -15,8 +15,8 @@ use Goomento\Core\Helper\Hooks;
         <?= /* @noEscape */ $headContent ?>
         <?= /* @noEscape */ $headAdditional ?>
         <?php
-        if (!Hooks::didAction('header')) {
-            Hooks::doAction('header');
+        if (!HooksHelper::didAction('header')) {
+            HooksHelper::doAction('header');
         }
         ?>
     </head>
@@ -25,8 +25,8 @@ use Goomento\Core\Helper\Hooks;
         <?= /* @noEscape */ $bodyAttributes ?>>
         <?= /* @noEscape */ $layoutContent ?>
         <?php
-        if (!Hooks::didAction('footer')) {
-            Hooks::doAction('footer');
+        if (!HooksHelper::didAction('footer')) {
+            HooksHelper::doAction('footer');
         }
         ?>
     </body>

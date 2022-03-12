@@ -14,10 +14,6 @@ use Magento\Framework\App\State as AppState;
 use Magento\Framework\App\Area;
 use Magento\Framework\Exception\LocalizedException;
 
-/**
- * Class State
- * @package Goomento\Core\Helper
- */
 class State extends AbstractHelper
 {
     /**

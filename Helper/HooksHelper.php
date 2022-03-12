@@ -8,15 +8,10 @@ declare(strict_types=1);
 
 namespace Goomento\Core\Helper;
 
-
 use Goomento\Core\Traits\TraitStaticInstances;
 use Goomento\Core\Model\HookManager;
 
-/**
- * Class Hooks
- * @package Goomento\Core\Helper
- */
-class Hooks
+class HooksHelper
 {
     use TraitStaticInstances;
 
@@ -103,13 +98,13 @@ class Hooks
      * Retrieve the number of times an action is fired
      *
      * @param string $tag The filter hook to which the function to be checked
-     * @return int|mixed
+     * @return bool
      */
-    public static function didAction(string $tag)
+    public static function didAction(string $tag) : bool
     {
         /** @var HookManager $instance */
         $instance = self::getInstance(HookManager::class);
-        return $instance->didAction($tag);
+        return (bool) $instance->didAction($tag);
     }
 
     /**

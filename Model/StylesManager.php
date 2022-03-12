@@ -8,10 +8,6 @@ declare(strict_types=1);
 
 namespace Goomento\Core\Model;
 
-/**
- * Class StylesManager
- * @package Goomento\PageBuilder\Model
- */
 class StylesManager extends AssetDependencies
 {
     /**
