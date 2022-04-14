@@ -6,13 +6,6 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="Goomento\Core\SubSystem">
-        <arguments>
-            <argument name="systems"  xsi:type="array">
-                <item name="theming" xsi:type="string">Goomento\Core\Model\Theme</item>
-            </argument>
-        </arguments>
-    </type>
     <type name="\Magento\Framework\App\ActionInterface">
         <plugin name="controllers.execute" type="Goomento\Core\Plugin\App\ActionInterface\ControllersExecute" sortOrder="0" />
     </type>
@@ -20,9 +13,4 @@
         <plugin name="controllers.dispatch" type="Goomento\Core\Plugin\App\Action\AbstractAction\ControllersDispatch" sortOrder="0" />
     </type>
     <preference for="Goomento\Core\SubSystemInterface" type="Goomento\Core\SubSystem\Proxy" />
-    <type name="Magento\Framework\View\Result\Page">
-        <arguments>
-            <argument name="template" xsi:type="string">Goomento_Core::root.phtml</argument>
-        </arguments>
-    </type>
 </config>

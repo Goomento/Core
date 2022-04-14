@@ -10,12 +10,4 @@
     <head>
         <css src="Goomento_Core::css/style-m.css"/>
     </head>
-    <body>
-        <referenceBlock name="after.body.start">
-            <block name="goomento.templates.header" template="Goomento_Core::templates/header.phtml" after="-" />
-        </referenceBlock>
-        <referenceContainer name="footer">
-            <block name="goomento.templates.footer" template="Goomento_Core::templates/footer.phtml" after="-" />
-        </referenceContainer>
-    </body>
 </page>
