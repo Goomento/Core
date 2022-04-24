@@ -13,10 +13,10 @@ use Magento\Framework\App\ObjectManager;
 trait TraitStaticInstances
 {
     /**
-     * @param null $type
+     * @param string|null $type
      * @return mixed
      */
-    private static function getInstance($type = null)
+    private static function getInstance(?string $type)
     {
         return self::getObjectManager()->get($type ?? __CLASS__);
     }

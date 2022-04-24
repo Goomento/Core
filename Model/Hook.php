@@ -263,9 +263,9 @@ class Hook implements Iterator, ArrayAccess
         }
 
         if ($function[0] instanceof \Closure) {
-            $ref = new ReflectionFunction($function[0]);
+            $ref = new \ReflectionFunction($function[0]);
             $keys['closure'] = $ref->getName();
-            $keys['namespace'] = $ref->getNamespaceName() ?: 'empty';
+            $keys['namespace'] = $ref->getNamespaceName();
             $keys['start_line'] = $ref->getStartLine();
             $keys['end_line'] = $ref->getEndLine();
             if ($args = $ref->getParameters()) {
@@ -275,6 +275,7 @@ class Hook implements Iterator, ArrayAccess
             }
         } elseif(is_object($function[0])) {
             $keys['class'] = get_class($function[0]);
+            $keys['hash'] = spl_object_hash($function[0]);
         } elseif (is_string($function[0])) {
             $keys['class'] = $function[0];
         }
@@ -284,11 +285,7 @@ class Hook implements Iterator, ArrayAccess
         }
 
         if (!empty($keys)) {
-            $result = '';
-            foreach ($keys as $key => $value) {
-                $result .= $key . '::' . $value . '::';
-            }
-            return strtoupper($result);
+            return implode('::', $keys);
         }
 
         return null;
@@ -386,7 +383,7 @@ class Hook implements Iterator, ArrayAccess
      * @return bool True if the offset exists, false otherwise.
      *
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset) : bool
     {
         return isset($this->callbacks[$offset]);
     }
@@ -401,7 +398,7 @@ class Hook implements Iterator, ArrayAccess
      * @link https://secure.php.net/manual/en/arrayaccess.offsetget.php
      *
      */
-    public function offsetGet($offset)
+    public function offsetGet($offset) : mixed
     {
         return $this->callbacks[$offset] ?? null;
     }
@@ -415,7 +412,7 @@ class Hook implements Iterator, ArrayAccess
      * @link https://secure.php.net/manual/en/arrayaccess.offsetset.php
      *
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value) : void
     {
         if (is_null($offset)) {
             $this->callbacks[] = $value;
@@ -432,7 +429,7 @@ class Hook implements Iterator, ArrayAccess
      *
      *
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset) : void
     {
         unset($this->callbacks[$offset]);
     }
@@ -445,7 +442,7 @@ class Hook implements Iterator, ArrayAccess
      *
      *
      */
-    public function current()
+    public function current() : mixed
     {
         return current($this->callbacks);
     }
@@ -453,14 +450,13 @@ class Hook implements Iterator, ArrayAccess
     /**
      * Moves forward to the next element.
      *
-     * @return array Of callbacks at next priority.
+     * @return void Of callbacks at next priority.
      * @link https://secure.php.net/manual/en/iterator.next.php
      *
-     *
      */
-    public function next()
+    public function next() : void
     {
-        return next($this->callbacks);
+        next($this->callbacks);
     }
 
     /**
@@ -471,7 +467,7 @@ class Hook implements Iterator, ArrayAccess
      *
      *
      */
-    public function key()
+    public function key() : mixed
     {
         return key($this->callbacks);
     }
@@ -484,7 +480,7 @@ class Hook implements Iterator, ArrayAccess
      *
      *
      */
-    public function valid()
+    public function valid() : bool
     {
         return key($this->callbacks) !== null;
     }
@@ -495,7 +491,7 @@ class Hook implements Iterator, ArrayAccess
      *
      * @link https://secure.php.net/manual/en/iterator.rewind.php
      */
-    public function rewind()
+    public function rewind() : void
     {
         reset($this->callbacks);
     }

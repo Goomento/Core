@@ -39,6 +39,7 @@ class ScriptsManager extends AssetDependencies
      */
     private $defaultResource = [
         'jquery',
+        'underscore',
         'jquery/ui'
     ];
 
@@ -152,7 +153,7 @@ class ScriptsManager extends AssetDependencies
         $obj = $this->registered[ $handle ];
 
         if (!$obj['ver']) {
-            $ver = Configuration::VERSION;
+            $ver = Configuration::version();
         } else {
             $ver = $obj['ver'];
         }
@@ -162,7 +163,7 @@ class ScriptsManager extends AssetDependencies
         }
 
         $src         = $obj['src'];
-        $print       = (bool)isset($obj['extra']['print']) && $obj['extra']['print'];
+        $print       = (bool) isset($obj['extra']['print']) && $obj['extra']['print'];
         $cond_before = '';
         $cond_after  = '';
         $conditional = $obj['extra']['conditional'] ?? '';
@@ -348,8 +349,8 @@ class ScriptsManager extends AssetDependencies
      */
     public function doHeadItems(): array
     {
-        $this->doItems(false, 0);
         $this->printRequireConfig();
+        $this->doItems(false, 0);
         return $this->done;
     }
 

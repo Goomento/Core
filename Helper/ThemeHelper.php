@@ -16,33 +16,38 @@ class ThemeHelper
     /**
      * @var ScriptsManager
      */
-    private static $scriptManager;
+    private static $scriptsManager;
+
     /**
      * @var StylesManager
      */
     private static $stylesManager;
 
     /**
-     * @return ScriptsManager|mixed
+     * @return ScriptsManager
      */
     public static function getScriptsManager()
     {
-        if (is_null(self::$scriptManager)) {
+        if (self::$scriptsManager === null) {
             /** @var ScriptsManager $scriptManager */
-            self::$scriptManager = ObjectManagerHelper::get(ScriptsManager::class);
+            self::$scriptsManager = ObjectManagerHelper::get(
+                ScriptsManager::class
+            );
         }
 
-        return self::$scriptManager;
+        return self::$scriptsManager;
     }
 
     /**
-     * @return StylesManager|mixed
+     * @return StylesManager
      */
     public static function getStylesManager()
     {
-        if (is_null(self::$stylesManager)) {
+        if (self::$stylesManager === null) {
             /** @var StylesManager $stylesManager */
-            self::$stylesManager = ObjectManagerHelper::get(StylesManager::class);
+            self::$stylesManager = ObjectManagerHelper::get(
+                StylesManager::class
+            );
         }
 
         return self::$stylesManager;
@@ -76,11 +81,11 @@ class ThemeHelper
 
     /**
      * Register a new script.
+     *
      * @param string $handle    Name of the script. Should be unique.
      * @param string|bool      $src       Full URL of the script, or path of the script relative to the WordPress root directory.
      *                                    If source is set to false, script is an alias of other scripts it depends on.
      * @param string[]         $deps      Optional. An array of registered script handles this script depends on. Default empty array.
-     * @param string|bool|null $ver       Optional. String specifying script version number, if it has one, which is added to the URL
      *                                    as a query string for cache busting purposes. If version is set to false, a version
      *                                    number is automatically added equal to current installed WordPress version.
      *                                    If set to null, no version is added.
@@ -89,19 +94,10 @@ class ThemeHelper
     public static function registerScript(
         string $handle,
         $src,
-        array $deps = [],
-        $ver = false,
-        bool $print = false
+        array $deps = []
     )
     {
-        self::getScriptsManager()->add($handle, $src, $deps, $ver);
-//        if ($in_footer) {
-        // @TODO Remove this
-            self::getScriptsManager()->addData($handle, 'group', 1);
-//        }
-        if ($print) {
-            self::getScriptsManager()->addData($handle, 'print', 1);
-        }
+        self::getScriptsManager()->add($handle, $src, $deps);
         return true;
     }
 
@@ -140,32 +136,22 @@ class ThemeHelper
      * Enqueue a script.
      *
      * Registers the script if $src provided (does NOT overwrite), and enqueues it.
-     * @param string $handle    Name of the script. Should be unique.
-     * @param string           $src       Full URL of the script, or path of the script relative to the WordPress root directory.
+     * @param string $handle Name of the script. Should be unique.
+     * @param string $src Full URL of the script, or path of the script relative to the WordPress root directory.
      *                                    Default empty.
-     * @param string[] $deps      Optional. An array of registered script handles this script depends on. Default empty array.
-     * @param string|bool|null $ver       Optional. String specifying script version number, if it has one, which is added to the URL
-     *                                    as a query string for cache busting purposes. If version is set to false, a version
-     *                                    number is automatically added equal to current installed WordPress version.
-     *                                    If set to null, no version is added.
-     **/
+     * @param string[] $deps Optional. An array of registered script handles this script depends on. Default empty array.
+     */
     public static function enqueueScript(
         string $handle,
         string $src = '',
-        array  $deps = [],
-        $ver = false,
-        bool   $print = false
+        array  $deps = []
     )
     {
         if ($src) {
-            $_handle = explode('?', $handle);
-
-            self::getScriptsManager()->add($_handle[0], $src, $deps, $ver);
-
-            if ($print) {
-                self::getScriptsManager()->addData($_handle[0], 'print', 1);
-            }
+            self::registerScript($handle, $src, $deps);
         }
+
+        self::getScriptsManager()->addData($handle, 'print', 1);
 
         self::getScriptsManager()->enqueue($handle);
     }
@@ -218,11 +204,13 @@ class ThemeHelper
     }
 
     /**
+     * Add dependencies to the target handle
+     *
      * @param string|array $deps
      * @param string $handle
      * @return ScriptsManager
      */
-    public static function addDeps($deps, string $handle)
+    public static function addScriptDeps($deps, string $handle)
     {
         return self::getScriptsManager()->addDeps($deps, $handle);
     }
