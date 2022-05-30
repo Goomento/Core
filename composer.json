@@ -2,7 +2,7 @@
     "name": "goomento/module-core",
     "description": "Magento 2 Goomento Core module",
     "type": "magento2-module",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "license": [
         "OSL-3.0"
     ],

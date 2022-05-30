@@ -13,4 +13,9 @@
         <plugin name="controllers.dispatch" type="Goomento\Core\Plugin\App\Action\AbstractAction\ControllersDispatch" sortOrder="0" />
     </type>
     <preference for="Goomento\Core\SubSystemInterface" type="Goomento\Core\SubSystem\Proxy" />
+    <type name="Magento\Framework\Controller\ResultInterface">
+        <plugin name="goomento.modify_response"
+                type="Goomento\Core\Plugin\Framework\Controller\ResultInterface\ModifyResponse"
+                sortOrder="-2022"/>
+    </type>
 </config>

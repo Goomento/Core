@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 namespace Goomento\Core\Model;
 
-use Goomento\PageBuilder\Configuration;
-
 class ScriptsManager extends AssetDependencies
 {
     /**
@@ -152,16 +150,6 @@ class ScriptsManager extends AssetDependencies
 
         $obj = $this->registered[ $handle ];
 
-        if (!$obj['ver']) {
-            $ver = Configuration::version();
-        } else {
-            $ver = $obj['ver'];
-        }
-
-        if (isset($this->args[ $handle ])) {
-            $ver = $ver ? $ver . '&amp;' . $this->args[ $handle ] : $this->args[ $handle ];
-        }
-
         $src         = $obj['src'];
         $print       = (bool) isset($obj['extra']['print']) && $obj['extra']['print'];
         $cond_before = '';
@@ -203,21 +191,11 @@ class ScriptsManager extends AssetDependencies
         }
 
         // A single item may alias a set of items, by having dependencies, but no source.
-        if (! $src) {
+        if (!$src) {
             if ($inline_script_tag) {
                 echo $inline_script_tag;
             }
 
-            return true;
-        }
-
-        if (! empty($ver)) {
-            $src .= "?v=" . $ver;
-        }
-
-        $src = $this->hookManager->applyFilters('script_loader_src', $src, $handle);
-
-        if (! $src) {
             return true;
         }
 
@@ -375,21 +353,21 @@ class ScriptsManager extends AssetDependencies
             $this->requiredConfig = [];
             $config = ['paths' => [], 'shim' => []];
             foreach ($this->registered as $item) {
-                if (in_array($item['handle'], $this->defaultResource)) {
+                if (empty($item['src'])) {
                     continue;
                 }
 
                 $this->requiredConfig[] = $item['handle'];
-                $src = $this->hookManager->applyFilters('script_loader_src', $item['src'], $item['handle']);
-                $config['paths'][$item['handle']] = $src;
-                if (isset($item['deps']) && ! empty($item['deps'])) {
-                    $config['shim'][$item['handle']] = array_values($item['deps']);
+                $config['paths'][$item['handle']] = $item['src'];
+                if (!empty($item['deps'])) {
+                    $config['shim'][$item['handle']]['deps'] = array_values($item['deps']);
+                }
+                if (isset($item['args']['requirejs']) && !empty($item['args']['requirejs'])) {
+                    $config = array_merge_recursive($config, $item['args']['requirejs']);
                 }
             }
-            printf(
-                "<script>(function(require){(function() {require.config(%s)})();})(require)</script>\n",
-                json_encode($config)
-            );
+            $jsonVariable = json_encode($config);
+            printf("<script>(function(require){(function() {require.config(%s)})();})(require)</script>", $jsonVariable);
         }
     }
 }

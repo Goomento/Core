@@ -191,10 +191,9 @@ abstract class AssetDependencies
      * @param string|bool|null $ver    Optional. String specifying item version number, if it has one, which is added to the URL
      *                                 as a query string for cache busting purposes.
      *                                 If set to null, no version is added.
-     * @param mixed            $args   Optional. Custom property of the item. NOT the class property $args. Examples: $media, $in_footer.
-     * @return bool Whether the item has been registered. True on success, false on failure.
+     * @param mixed            $args   Optional. Custom property of the item. NOT the class property $args..
      */
-    public function add($handle, $src, $deps = [], $ver = false, $args = null)
+    public function add(string $handle, $src, array $deps = [], $ver = false, $args = null)
     {
         if (isset($this->registered[ $handle ])) {
             return false;
@@ -207,7 +206,6 @@ abstract class AssetDependencies
             'args' => $args,
             'extra' => [],
         ];
-        return true;
     }
 
     /**
@@ -220,12 +218,9 @@ abstract class AssetDependencies
      * @param mixed  $value  The data value.
      * @return bool True on success, false on failure.
      */
-    public function addData($handle, $key, $value)
+    public function addData(string $handle, string $key, $value)
     {
         if (! isset($this->registered[ $handle ])) {
-            return false;
-        }
-        if (! is_scalar($key)) {
             return false;
         }
 
@@ -243,7 +238,7 @@ abstract class AssetDependencies
      * @param string $key    The data key.
      * @return mixed Extra item data (string), false otherwise.
      */
-    public function getData($handle, $key)
+    public function getData(string $handle, string $key)
     {
         if (! isset($this->registered[ $handle ])) {
             return false;
@@ -265,7 +260,9 @@ abstract class AssetDependencies
     public function remove($handles)
     {
         foreach ((array) $handles as $handle) {
-            unset($this->registered[ $handle ]);
+            if (isset($this->registered[$handle])) {
+                unset($this->registered[ $handle ]);
+            }
         }
     }
 

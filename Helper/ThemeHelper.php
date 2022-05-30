@@ -93,12 +93,35 @@ class ThemeHelper
      */
     public static function registerScript(
         string $handle,
-        $src,
-        array $deps = []
+        string $src,
+        array $deps = [],
+        array $args = []
     )
     {
-        self::getScriptsManager()->add($handle, $src, $deps);
+        self::getScriptsManager()->add($handle, $src, $deps, false, $args);
         return true;
+    }
+
+    /**
+     * Un-register scripts from manager
+     *
+     * @param string|array $handle
+     * @return void
+     */
+    public static function removeScripts($handle)
+    {
+        self::getScriptsManager()->remove($handle);
+    }
+
+    /**
+     * Un-register styles from manager
+     *
+     * @param string|array $handle
+     * @return void
+     */
+    public static function removeStyle($handle)
+    {
+        self::getStylesManager()->remove($handle);
     }
 
     /**
@@ -106,29 +129,9 @@ class ThemeHelper
      *
      * Registers the style if source provided (does NOT overwrite) and enqueues.
      * @param string $handle Name of the stylesheet. Should be unique.
-     * @param string           $src    Full URL of the stylesheet, or path of the stylesheet relative to the WordPress root directory.
-     *                                 Default empty.
-     * @param string[] $deps   Optional. An array of registered stylesheet handles this stylesheet depends on. Default empty array.
-     * @param string|bool|null $ver    Optional. String specifying stylesheet version number, if it has one, which is added to the URL
-     *                                 as a query string for cache busting purposes. If version is set to false, a version
-     *                                 number is automatically added equal to current installed WordPress version.
-     *                                 If set to null, no version is added.
-     * @param string           $media  Optional. The media for which this stylesheet has been defined.
-     *                                 Default 'all'. Accepts media types like 'all', 'print' and 'screen', or media queries like
-     *                                 '(orientation: portrait)' and '(max-width: 640px)'.
      */
-    public static function enqueueStyle(
-        string $handle,
-        string $src = '',
-        array $deps = [],
-        $ver = false,
-        string $media = 'all'
-    )
+    public static function enqueueStyle(string $handle)
     {
-        if ($src) {
-            $_handle = explode('?', $handle);
-            self::getStylesManager()->add($_handle[0], $src, $deps, $ver, $media);
-        }
         self::getStylesManager()->enqueue($handle);
     }
 
@@ -137,19 +140,9 @@ class ThemeHelper
      *
      * Registers the script if $src provided (does NOT overwrite), and enqueues it.
      * @param string $handle Name of the script. Should be unique.
-     * @param string $src Full URL of the script, or path of the script relative to the WordPress root directory.
-     *                                    Default empty.
-     * @param string[] $deps Optional. An array of registered script handles this script depends on. Default empty array.
      */
-    public static function enqueueScript(
-        string $handle,
-        string $src = '',
-        array  $deps = []
-    )
+    public static function enqueueScript(string $handle)
     {
-        if ($src) {
-            self::registerScript($handle, $src, $deps);
-        }
 
         self::getScriptsManager()->addData($handle, 'print', 1);
 
