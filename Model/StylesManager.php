@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace Goomento\Core\Model;
 
+use Goomento\Core\Helper\HooksHelper;
+
 class StylesManager extends AssetDependencies
 {
     /**
@@ -68,26 +70,26 @@ class StylesManager extends AssetDependencies
         }
 
         $src         = $obj['src'];
-        $cond_before = '';
-        $cond_after  = '';
+        $condBefore = '';
+        $condAfter  = '';
         $conditional = $obj['extra']['conditional'] ?? '';
 
         if ($conditional) {
-            $cond_before = "<!--[if {$conditional}]>\n";
-            $cond_after  = "<![endif]-->\n";
+            $condBefore = "<!--[if {$conditional}]>\n";
+            $condAfter  = "<![endif]-->\n";
         }
 
-        $inline_style = $this->printInlineStyle($handle, false);
+        $inlineStyle = $this->printInlineStyle($handle, false);
 
-        if ($inline_style) {
-            $inline_style_tag = sprintf(
+        if ($inlineStyle) {
+            $inlineStyleTag = sprintf(
                 "<style id='%s-inline-css'%s>\n%s\n</style>\n",
                 $handle,
                 $this->typeAttr,
-                $inline_style
+                $inlineStyle
             );
         } else {
-            $inline_style_tag = '';
+            $inlineStyleTag = '';
         }
 
         if (isset($obj['args'])) {
@@ -98,8 +100,8 @@ class StylesManager extends AssetDependencies
 
         // A single item may alias a set of items, by having dependencies, but no source.
         if (! $src) {
-            if ($inline_style_tag) {
-                echo $inline_style_tag;
+            if ($inlineStyleTag) {
+                echo $inlineStyleTag;
             }
 
             return true;
@@ -131,39 +133,39 @@ class StylesManager extends AssetDependencies
          * @param string $href   The stylesheet's source URL.
          * @param string $media  The stylesheet's media attribute.
          */
-        $tag = $this->hookManager->applyFilters('style_loader_tag', $tag, $handle, $href, $media);
+        $tag = HooksHelper::applyFilters('style_loader_tag', $tag, $handle, $href, $media)->getResult();
 
         if ('rtl' === $this->textDirection && isset($obj->extra['rtl']) && $obj->extra['rtl']) {
             if (is_bool($obj->extra['rtl']) || 'replace' === $obj->extra['rtl']) {
                 $suffix   = $obj->extra['suffix'] ?? '';
-                $rtl_href = str_replace("{$suffix}.css", "-rtl{$suffix}.css", $this->_cssHref($src, $ver, "$handle-rtl"));
+                $rtlHref = str_replace("{$suffix}.css", "-rtl{$suffix}.css", $this->_cssHref($src, $ver, "$handle-rtl"));
             } else {
-                $rtl_href = $this->_cssHref($obj->extra['rtl'], $ver, "$handle-rtl");
+                $rtlHref = $this->_cssHref($obj->extra['rtl'], $ver, "$handle-rtl");
             }
 
-            $rtl_tag = sprintf(
+            $rtlTag = sprintf(
                 "<link rel='%s' id='%s-rtl-css' %s href='%s'%s media='%s' />\n",
                 $rel,
                 $handle,
                 $title,
-                $rtl_href,
+                $rtlHref,
                 $this->typeAttr,
                 $media
             );
 
-            $rtl_tag = $this->hookManager->applyFilters('style_loader_tag', $rtl_tag, $handle, $rtl_href, $media);
+            $rtlTag = HooksHelper::applyFilters('style_loader_tag', $rtlTag, $handle, $rtlHref, $media)->getResult();
 
             if ($obj->extra['rtl'] === 'replace') {
-                $tag = $rtl_tag;
+                $tag = $rtlTag;
             } else {
-                $tag .= $rtl_tag;
+                $tag .= $rtlTag;
             }
         }
 
-        echo $cond_before;
+        echo $condBefore;
         echo $tag;
         $this->printInlineStyle($handle);
-        echo $cond_after;
+        echo $condAfter;
 
         return true;
     }
@@ -239,9 +241,9 @@ class StylesManager extends AssetDependencies
             /**
              * Filters the array of enqueued styles before processing for output.
              *
-             * @param string[] $to_do The list of enqueued style handles about to be processed.
+             * @param string[] $toDo The list of enqueued style handles about to be processed.
              */
-            $this->toDo = $this->hookManager->applyFilters('print_styles_array', $this->toDo);
+            $this->toDo = HooksHelper::applyFilters('print_styles_array', $this->toDo)->getResult();
         }
         return $r;
     }
@@ -268,7 +270,7 @@ class StylesManager extends AssetDependencies
          * @param string $src    The source URL of the enqueued style.
          * @param string $handle The style's registered handle.
          */
-        return $this->hookManager->applyFilters('style_loader_src', $src, $handle);
+        return HooksHelper::applyFilters('style_loader_src', $src, $handle)->getResult();
     }
 
     /**

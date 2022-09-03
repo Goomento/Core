@@ -22,7 +22,7 @@ class BodyClasses implements ModifierInterface
     public function modify($data)
     {
         $data = (string) $data;
-        $bodyClasses = HooksHelper::applyFilters('body_classes', []);
+        $bodyClasses = HooksHelper::applyFilters('body_classes', [])->getResult();
         if (!empty($bodyClasses)) {
             if (preg_match('/<body[^>]+?>/i', $data, $matches)) {
                 $bodyClasses = implode(' ', array_values($bodyClasses));

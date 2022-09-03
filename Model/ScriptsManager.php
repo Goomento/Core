@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace Goomento\Core\Model;
 
+use Goomento\Core\Helper\HooksHelper;
+
 class ScriptsManager extends AssetDependencies
 {
     /**
@@ -152,54 +154,54 @@ class ScriptsManager extends AssetDependencies
 
         $src         = $obj['src'];
         $print       = (bool) isset($obj['extra']['print']) && $obj['extra']['print'];
-        $cond_before = '';
-        $cond_after  = '';
+        $condBefore = '';
+        $condAfter  = '';
         $conditional = $obj['extra']['conditional'] ?? '';
 
         if ($conditional) {
-            $cond_before = "<!--[if {$conditional}]>\n";
-            $cond_after  = "<![endif]-->\n";
+            $condBefore = "<!--[if {$conditional}]>\n";
+            $condAfter  = "<![endif]-->\n";
         }
 
-        $before_handle = $this->printInlineScript($handle, 'before', false);
-        $after_handle  = $this->printInlineScript($handle, 'after', false);
+        $beforeHandle = $this->printInlineScript($handle, 'before', false);
+        $afterHandle  = $this->printInlineScript($handle, 'after', false);
 
-        if ($before_handle) {
-            $before_handle = sprintf("<script%s>\n%s\n</script>\n", $this->typeAttr, $before_handle);
+        if ($beforeHandle) {
+            $beforeHandle = sprintf("<script%s>\n%s\n</script>\n", $this->typeAttr, $beforeHandle);
         }
 
-        if ($after_handle) {
-            $after_handle = sprintf("<script%s>\n%s\n</script>\n", $this->typeAttr, $after_handle);
+        if ($afterHandle) {
+            $afterHandle = sprintf("<script%s>\n%s\n</script>\n", $this->typeAttr, $afterHandle);
         }
 
-        if ($before_handle || $after_handle) {
-            $inline_script_tag = $cond_before . $before_handle . $after_handle . $cond_after;
+        if ($beforeHandle || $afterHandle) {
+            $inlineScriptTag = $condBefore . $beforeHandle . $afterHandle . $condAfter;
         } else {
-            $inline_script_tag = '';
+            $inlineScriptTag = '';
         }
 
-        $has_conditional_data = $conditional && $this->getData($handle, 'data');
+        $hasConditionalData = $conditional && $this->getData($handle, 'data');
 
-        if ($has_conditional_data) {
-            echo $cond_before;
+        if ($hasConditionalData) {
+            echo $condBefore;
         }
 
         $this->printExtraScript($handle);
 
-        if ($has_conditional_data) {
-            echo $cond_after;
+        if ($hasConditionalData) {
+            echo $condAfter;
         }
 
         // A single item may alias a set of items, by having dependencies, but no source.
         if (!$src) {
-            if ($inline_script_tag) {
-                echo $inline_script_tag;
+            if ($inlineScriptTag) {
+                echo $inlineScriptTag;
             }
 
             return true;
         }
 
-        $tag  = $cond_before . $before_handle;
+        $tag  = $condBefore . $beforeHandle;
         if ($print) {
             $requireJs = [];
             $depends = $obj['deps'];
@@ -211,7 +213,7 @@ class ScriptsManager extends AssetDependencies
             $tag .= sprintf("<script>require(['%s'])</script>", $requireJs);
         }
 
-        $tag .= $after_handle . $cond_after;
+        $tag .= $afterHandle . $condAfter;
 
         /**
          * Filters the HTML script tag of an enqueued script.
@@ -220,7 +222,7 @@ class ScriptsManager extends AssetDependencies
          * @param string $handle The script's registered handle.
          * @param string $src    The script's source URL.
          */
-        $tag = $this->hookManager->applyFilters('script_loader_tag', $tag, $handle, $src);
+        $tag = HooksHelper::applyFilters('script_loader_tag', $tag, $handle, $src)->getResult();
 
         echo $tag;
 
@@ -315,7 +317,7 @@ class ScriptsManager extends AssetDependencies
     {
         $r = parent::allDeps($handles, $recursion, $group);
         if (! $recursion) {
-            $this->toDo = $this->hookManager->applyFilters('print_scripts_array', $this->toDo);
+            $this->toDo = HooksHelper::applyFilters('print_scripts_array', $this->toDo)->getResult();
         }
         return $r;
     }

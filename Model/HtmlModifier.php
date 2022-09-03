@@ -34,12 +34,14 @@ class HtmlModifier implements ModifierInterface
     )
     {
         $this->objectManager = $objectManager;
-        if (empty($modifiers)) {
-            $modifiers = [
-                'body_classes' => HtmlModifier\BodyClasses::class,
-                'header' => HtmlModifier\Header::class,
-                'footer' => HtmlModifier\Footer::class,
-            ];
+        if (!isset($modifiers['body_classes'])) {
+            $modifiers['body_classes'] = HtmlModifier\BodyClasses::class;
+        }
+        if (!isset($modifiers['header'])) {
+            $modifiers['header'] = HtmlModifier\Header::class;
+        }
+        if (!isset($modifiers['footer'])) {
+            $modifiers['footer'] = HtmlModifier\Footer::class;
         }
         $this->modifiers = $modifiers;
     }
@@ -53,7 +55,7 @@ class HtmlModifier implements ModifierInterface
      */
     public function modify($data)
     {
-        $print = HooksHelper::applyFilters('print_resources', true);
+        $print = HooksHelper::applyFilters('print_resources', true)->getResult();
         if ($print === true) {
             $data = (string) $data;
             foreach ($this->modifiers as $modifier) {

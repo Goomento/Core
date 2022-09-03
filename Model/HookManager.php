@@ -27,28 +27,29 @@ class HookManager
 
     /**
      * @param $tag
-     * @param $function_to_add
+     * @param $functionToAdd
      * @param int $priority
-     * @return bool
+     * @return Transport
      */
-    public function addFilter($tag, $function_to_add, int $priority = 10): bool
+    public function addFilter($tag, $functionToAdd, int $priority = 10): Transport
     {
         if ( ! isset( $this->hooks[ $tag ] ) ) {
             $this->hooks[ $tag ] = new Hook();
         }
-        $this->hooks[ $tag ]->addFilter( $tag, $function_to_add, $priority );
-        return true;
+        return $this->hooks[ $tag ]->addFilter( $tag, $functionToAdd, $priority );
     }
 
     /**
      * @param $tag
      * @param $value
-     * @return mixed
+     * @return Transport
      */
-    public function applyFilters($tag, $value = null)
+    public function applyFilters($tag, $value = null) : Transport
     {
         $filtered = $value;
+
         if ( isset($this->hooks[$tag]) ) {
+
             $args = func_get_args();
 
             $this->currentFilter[] = $tag;
@@ -58,6 +59,8 @@ class HookManager
             $filtered = $this->hooks[ $tag ]->applyFilters( $value, $args );
 
             array_pop( $this->currentFilter );
+        } else {
+            $filtered = (new Transport())->setResult($filtered);
         }
 
         return $filtered;
@@ -90,17 +93,19 @@ class HookManager
 
     /**
      * @param $tag
-     * @param $function_to_add
+     * @param $functionToAdd
      * @param int $priority
+     * @return Transport
      */
-    public function addAction($tag, $function_to_add, int $priority = 10)
+    public function addAction($tag, $functionToAdd, int $priority = 10)
     {
-        $this->addFilter($tag, $function_to_add, $priority);
+        return $this->addFilter($tag, $functionToAdd, $priority);
     }
 
     /**
      * @param $tag
      * @param mixed ...$arg
+     * @return void
      */
     public function doAction($tag, ...$arg)
     {

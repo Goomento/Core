@@ -50,19 +50,18 @@ abstract class AssetDependencies
      * @var array
      */
     protected $groups = [];
+
     /**
      * @var HookManager
+     * @deprecated
      */
     protected $hookManager;
 
     /**
      * ScriptsManager constructor.
-     * @param HookManager $hookManager
      */
-    public function __construct(
-        HookManager $hookManager
-    ) {
-        $this->hookManager = $hookManager;
+    public function __construct()
+    {
         $this->init();
     }
 
@@ -132,8 +131,8 @@ abstract class AssetDependencies
         }
 
         foreach ($handles as $handle) {
-            $handle_parts = explode('?', $handle);
-            $handle       = $handle_parts[0];
+            $handleParts = explode('?', $handle);
+            $handle       = $handleParts[0];
             $queued       = in_array($handle, $this->toDo, true);
 
             if (in_array($handle, $this->done, true)) { // Already done
@@ -141,22 +140,22 @@ abstract class AssetDependencies
             }
 
             $moved     = $this->setGroup($handle, $recursion, $group);
-            $new_group = $this->groups[ $handle ];
+            $newGroup = $this->groups[ $handle ];
 
             if ($queued && ! $moved) { // already queued and in the right group
                 continue;
             }
 
-            $keep_going = true;
+            $keepGoing = true;
             if (! isset($this->registered[ $handle ])) {
-                $keep_going = false; // Item doesn't exist.
+                $keepGoing = false; // Item doesn't exist.
             } elseif ($this->registered[ $handle ]['deps'] && array_diff($this->registered[ $handle ]['deps'], array_keys($this->registered))) {
-                $keep_going = false; // Item requires dependencies that don't exist.
-            } elseif ($this->registered[ $handle ]['deps'] && ! $this->allDeps($this->registered[ $handle ]['deps'], true, $new_group)) {
-                $keep_going = false; // Item requires dependencies that don't exist.
+                $keepGoing = false; // Item requires dependencies that don't exist.
+            } elseif ($this->registered[ $handle ]['deps'] && ! $this->allDeps($this->registered[ $handle ]['deps'], true, $newGroup)) {
+                $keepGoing = false; // Item requires dependencies that don't exist.
             }
 
-            if (! $keep_going) { // Either item or its dependencies don't exist.
+            if (! $keepGoing) { // Either item or its dependencies don't exist.
                 if ($recursion) {
                     return false; // Abort this branch.
                 } else {
@@ -168,8 +167,8 @@ abstract class AssetDependencies
                 continue;
             }
 
-            if (isset($handle_parts[1])) {
-                $this->args[ $handle ] = $handle_parts[1];
+            if (isset($handleParts[1])) {
+                $this->args[ $handle ] = $handleParts[1];
             }
 
             $this->toDo[] = $handle;

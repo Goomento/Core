@@ -52,6 +52,19 @@ class Hook implements Iterator, ArrayAccess
     private $doingAction = false;
 
     /**
+     * @var Transport
+     */
+    private $transport;
+
+    /**
+     * Hook Constructor
+     */
+    public function __construct()
+    {
+        $this->transport = new Transport([]);
+    }
+
+    /**
      * Reveal the callbacks
      *
      * @return array
@@ -63,48 +76,51 @@ class Hook implements Iterator, ArrayAccess
 
     /**
      * Hooks a function or method to a specific filter action.
+     * @return Transport
      */
     public function addFilter(string $tag, $functionToAdd, int $priority)
     {
         $idx = $this->uniqueId($tag, $functionToAdd, $priority);
-        $priority_existed = isset($this->callbacks[$priority]);
+        $priorityExisted = isset($this->callbacks[$priority]);
 
         $this->callbacks[$priority][$idx] = [
             'function' => $functionToAdd,
         ];
 
         // if we're adding a new priority to the list, put them back in sorted order
-        if (!$priority_existed && count($this->callbacks) > 1) {
+        if (!$priorityExisted && count($this->callbacks) > 1) {
             ksort($this->callbacks, SORT_NUMERIC);
         }
 
         if ($this->nestingLevel > 0) {
-            $this->resortActiveIterations($priority, $priority_existed);
+            $this->resortActiveIterations($priority, $priorityExisted);
         }
+
+        return $this->transport;
     }
 
     /**
      * Handles resetting callback priority keys mid-iteration.
      *
-     * @param bool|int $new_priority Optional. The priority of the new filter being added. Default false,
+     * @param bool|int $newPriority Optional. The priority of the new filter being added. Default false,
      *                                   for no priority being added.
      * @param bool $priorityExisted Optional. Flag for whether the priority already existed before the new
      *                                   filter was added. Default false.
      *
      */
-    private function resortActiveIterations($new_priority = false, bool $priorityExisted = false)
+    private function resortActiveIterations($newPriority = false, bool $priorityExisted = false)
     {
-        $new_priorities = array_keys($this->callbacks);
+        $newPriorities = array_keys($this->callbacks);
 
         // If there are no remaining hooks, clear out all running iterations.
-        if (!$new_priorities) {
+        if (!$newPriorities) {
             foreach ($this->iterations as $index => $iteration) {
-                $this->iterations[$index] = $new_priorities;
+                $this->iterations[$index] = $newPriorities;
             }
             return;
         }
 
-        $min = min($new_priorities);
+        $min = min($newPriorities);
         foreach ($this->iterations as $index => &$iteration) {
             $current = current($iteration);
             // If we're already at the end of this iteration, just leave the array pointer where it is.
@@ -112,7 +128,7 @@ class Hook implements Iterator, ArrayAccess
                 continue;
             }
 
-            $iteration = $new_priorities;
+            $iteration = $newPriorities;
 
             if ($current < $min) {
                 array_unshift($iteration, $current);
@@ -125,7 +141,7 @@ class Hook implements Iterator, ArrayAccess
                 }
             }
 
-            if ($new_priority === $this->currentPriority[$index] && !$priorityExisted) {
+            if ($newPriority === $this->currentPriority[$index] && !$priorityExisted) {
                 /*
                  * ... and the new priority is the same as what $this->iterations thinks is the previous
                  * priority, we need to move back to it.
@@ -141,7 +157,7 @@ class Hook implements Iterator, ArrayAccess
                 if (false === $prev) {
                     // Start of the array. Reset, and go about our day.
                     reset($iteration);
-                } elseif ($new_priority !== $prev) {
+                } elseif ($newPriority !== $prev) {
                     // Previous wasn't the same. Move forward again.
                     next($iteration);
                 }
@@ -162,11 +178,11 @@ class Hook implements Iterator, ArrayAccess
      */
     public function removeFilter(string $tag, callable $functionToRemove, int $priority)
     {
-        $function_key = $this->uniqueId($tag, $functionToRemove, $priority);
+        $functionKey = $this->uniqueId($tag, $functionToRemove, $priority);
 
-        $exists = isset($this->callbacks[$priority][$function_key]);
+        $exists = isset($this->callbacks[$priority][$functionKey]);
         if ($exists) {
-            unset($this->callbacks[$priority][$function_key]);
+            unset($this->callbacks[$priority][$functionKey]);
             if (!$this->callbacks[$priority]) {
                 unset($this->callbacks[$priority]);
                 if ($this->nestingLevel > 0) {
@@ -191,13 +207,13 @@ class Hook implements Iterator, ArrayAccess
             return $this->hasFilters();
         }
 
-        $function_key = $this->uniqueId($tag, $functionToCheck, false);
-        if (!$function_key) {
+        $functionKey = $this->uniqueId($tag, $functionToCheck, false);
+        if (!$functionKey) {
             return false;
         }
 
         foreach ($this->callbacks as $priority => $callbacks) {
-            if (isset($callbacks[$function_key])) {
+            if (isset($callbacks[$functionKey])) {
                 return $priority;
             }
         }
@@ -294,21 +310,33 @@ class Hook implements Iterator, ArrayAccess
     /**
      * @param $value
      * @param array $args
-     * @return false|mixed
+     * @return Transport
      */
     public function applyFilters($value, array $args)
     {
+        $transport = $this->transport;
+
+        $transport->setData('_args', $args);
+        $transport->setData('_value', $value);
+
+        $transport->setResult($value);
+
         if (!$this->callbacks) {
-            return $value;
+            return $transport;
         }
 
-        $nesting_level = $this->nestingLevel++;
+        $nestingLevel = $this->nestingLevel++;
 
-        $this->iterations[$nesting_level] = array_keys($this->callbacks);
+        $this->iterations[$nestingLevel] = array_keys($this->callbacks);
+
+        $args[] = $transport;
+
+        $valueClass =  is_object($value) ? get_class($value) : null;
 
         do {
-            $this->currentPriority[$nesting_level] = current($this->iterations[$nesting_level]);
-            $priority = $this->currentPriority[$nesting_level];
+            $this->currentPriority[$nestingLevel] = current($this->iterations[$nestingLevel]);
+
+            $priority = $this->currentPriority[$nestingLevel];
 
             foreach ($this->callbacks[$priority] as $the_) {
                 if (!$this->doingAction) {
@@ -316,15 +344,29 @@ class Hook implements Iterator, ArrayAccess
                 }
 
                 $value = call_user_func_array($the_['function'], $args);
-            }
-        } while (false !== next($this->iterations[$nesting_level]));
 
-        unset($this->iterations[$nesting_level]);
-        unset($this->currentPriority[$nesting_level]);
+                if ($value === null) { // Return void
+                    $value = $transport->getData('_value');
+                } else {
+                    $valueType = gettype($value);
+                    $resultType = gettype($transport->getResult());
+
+                    $transport->setResult($value);
+
+                    if ($valueType !== $resultType || // Not the same type
+                        ($valueType === 'object' && $valueClass && get_class($value) !== $valueClass)) { // Not the same class
+                        $value = $transport->getData('_value');
+                    }
+                }
+            }
+        } while (false !== next($this->iterations[$nestingLevel]));
+
+        unset($this->iterations[$nestingLevel]);
+        unset($this->currentPriority[$nestingLevel]);
 
         $this->nestingLevel--;
 
-        return $value;
+        return $transport;
     }
 
     /**
@@ -350,17 +392,17 @@ class Hook implements Iterator, ArrayAccess
      */
     public function doAllHook(array &$args)
     {
-        $nesting_level = $this->nestingLevel++;
-        $this->iterations[$nesting_level] = array_keys($this->callbacks);
+        $nestingLevel = $this->nestingLevel++;
+        $this->iterations[$nestingLevel] = array_keys($this->callbacks);
 
         do {
-            $priority = current($this->iterations[$nesting_level]);
+            $priority = current($this->iterations[$nestingLevel]);
             foreach ($this->callbacks[$priority] as $the_) {
                 call_user_func_array($the_['function'], $args);
             }
-        } while (false !== next($this->iterations[$nesting_level]));
+        } while (false !== next($this->iterations[$nestingLevel]));
 
-        unset($this->iterations[$nesting_level]);
+        unset($this->iterations[$nestingLevel]);
         $this->nestingLevel--;
     }
 

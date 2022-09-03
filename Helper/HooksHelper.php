@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Goomento\Core\Helper;
 
+use Goomento\Core\Model\Transport;
 use Goomento\Core\Traits\TraitStaticInstances;
 use Goomento\Core\Model\HookManager;
 
@@ -39,12 +40,13 @@ class HooksHelper
     /**
      * Hooks a function or method to a specific filter action.
      *
-     * @param string $tag The name of the filter to hook the $function_to_add callback to.
+     * @param string $tag The name of the filter to hook the $callbackToAdd callback to.
      * @param callable|string|array $callbackToAdd The callback to be run when the filter is applied.
      * @param int $sortOrder The order in which the functions associated with a
      *                                  particular action are executed. Lower numbers correspond with
      *                                  earlier execution, and functions with the same priority are executed
      *                                  in the order in which they were added to the action.
+     * @return Transport
      *
      */
     public static function addFilter(
@@ -55,7 +57,7 @@ class HooksHelper
     {
         /** @var HookManager $instance */
         $instance = self::getInstance(HookManager::class);
-        $instance->addFilter($tag, $callbackToAdd, $sortOrder);
+        return $instance->addFilter($tag, $callbackToAdd, $sortOrder);
     }
 
     /**
@@ -69,6 +71,7 @@ class HooksHelper
      * The function also allows for multiple additional arguments to be passed to hooks.
      * @param string $tag     The name of the filter hook.
      * @param mixed  $value   The value to filter.
+     * @return Transport
      */
     public static function applyFilters(string $tag, ...$value)
     {
@@ -143,7 +146,7 @@ class HooksHelper
      * @param string $tag The name of the filter hook. Used for building
      *                                         the callback ID when SPL is not available. Default empty.
      * @param callable|null $functionToCheck Optional. The callback to check for. Default false.
-     * @return bool|int The priority of that hook is returned, or false if the function is not attached.
+     * @return bool The priority of that hook is returned, or false if the function is not attached.
      */
     public static function hasFilter($tag, $functionToCheck = null)
     {
