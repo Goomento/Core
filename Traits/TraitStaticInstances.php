@@ -16,7 +16,7 @@ trait TraitStaticInstances
      * @param string|null $type
      * @return mixed
      */
-    private static function getInstance(?string $type)
+    private static function getInstance(?string $type = null)
     {
         return self::getObjectManager()->get($type ?? __CLASS__);
     }
