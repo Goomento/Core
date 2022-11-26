@@ -250,7 +250,7 @@ class Hook implements Iterator, ArrayAccess
         }
 
         if (false === $priority) {
-            $this->callbacks = array();
+            $this->callbacks = [];
         } elseif (isset($this->callbacks[$priority])) {
             unset($this->callbacks[$priority]);
         }
@@ -267,11 +267,11 @@ class Hook implements Iterator, ArrayAccess
     private function uniqueId(string $tag, $function, $priority)
     {
         $keys = [];
-        if ( is_string( $function )) {
+        if (is_string($function)) {
             $keys['function'] = $function;
         }
 
-        if ( is_object( $function ) ) {
+        if (is_object($function)) {
             // Closures are currently implemented as objects
             $function = [$function, ''];
         } else {
@@ -289,7 +289,7 @@ class Hook implements Iterator, ArrayAccess
                     $keys['arg_' . $index] = $arg->getName();
                 }
             }
-        } elseif(is_object($function[0])) {
+        } elseif (is_object($function[0])) {
             $keys['class'] = get_class($function[0]);
             $keys['hash'] = spl_object_hash($function[0]);
         } elseif (is_string($function[0])) {
@@ -343,12 +343,15 @@ class Hook implements Iterator, ArrayAccess
                     $args[0] = $value;
                 }
 
-                $value = call_user_func_array($the_['function'], $args);
+                // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
+                $value = call_user_func($the_['function'], ...$args);
 
                 if ($value === null) { // Return void
                     $value = $transport->getData('_value');
                 } else {
+                    // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
                     $valueType = gettype($value);
+                    // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
                     $resultType = gettype($transport->getResult());
 
                     $transport->setResult($value);
@@ -398,7 +401,8 @@ class Hook implements Iterator, ArrayAccess
         do {
             $priority = current($this->iterations[$nestingLevel]);
             foreach ($this->callbacks[$priority] as $the_) {
-                call_user_func_array($the_['function'], $args);
+                // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
+                call_user_func($the_['function'], ...$args);
             }
         } while (false !== next($this->iterations[$nestingLevel]));
 

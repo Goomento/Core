@@ -29,8 +29,7 @@ class State extends AbstractHelper
     public function __construct(
         Context $context,
         AppState $state
-    )
-    {
+    ) {
         parent::__construct($context);
         $this->state = $state;
     }

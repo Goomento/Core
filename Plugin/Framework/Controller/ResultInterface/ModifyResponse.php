@@ -33,8 +33,7 @@ class ModifyResponse
     public function __construct(
         HtmlModifier $htmlModifier,
         LoggerInterface $logger
-    )
-    {
+    ) {
         $this->htmlModifier = $htmlModifier;
         $this->logger = $logger;
     }

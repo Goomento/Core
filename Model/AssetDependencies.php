@@ -68,7 +68,7 @@ abstract class AssetDependencies
     /**
      * Init the asset
      */
-    protected function init()
+    protected function init() // phpcs:ignore Magento2.CodeAnalysis.EmptyBlock.DetectedFunction
     {
     }
 

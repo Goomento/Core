@@ -11,6 +11,7 @@ namespace Goomento\Core\Helper;
 use Goomento\Core\Model\ScriptsManager;
 use Goomento\Core\Model\StylesManager;
 
+// phpcs:disable Magento2.Functions.StaticFunction.StaticFunction
 class ThemeHelper
 {
     /**
@@ -74,8 +75,7 @@ class ThemeHelper
         array $deps = [],
         $ver = false,
         string $media = 'all'
-    )
-    {
+    ) {
         return self::getStylesManager()->add($handle, $src, $deps, $ver, $media);
     }
 
@@ -96,8 +96,7 @@ class ThemeHelper
         string $src,
         array $deps = [],
         array $args = []
-    )
-    {
+    ) {
         self::getScriptsManager()->add($handle, $src, $deps, false, $args);
         return true;
     }

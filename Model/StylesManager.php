@@ -101,6 +101,7 @@ class StylesManager extends AssetDependencies
         // A single item may alias a set of items, by having dependencies, but no source.
         if (! $src) {
             if ($inlineStyleTag) {
+                // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
                 echo $inlineStyleTag;
             }
 
@@ -162,9 +163,12 @@ class StylesManager extends AssetDependencies
             }
         }
 
+        // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
         echo $condBefore;
+        // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
         echo $tag;
         $this->printInlineStyle($handle);
+        // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
         echo $condAfter;
 
         return true;
@@ -216,6 +220,7 @@ class StylesManager extends AssetDependencies
             return $output;
         }
 
+        // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
         printf(
             "<style id='%s-inline-css'%s>\n%s\n</style>\n",
             $handle,

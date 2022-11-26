@@ -41,8 +41,7 @@ class ControllersExecute
      */
     public function beforeExecute(
         ActionInterface $action
-    )
-    {
+    ) {
         $data = [
             'controller_action' => $action,
             'request' => $this->request
@@ -58,8 +57,7 @@ class ControllersExecute
     public function afterExecute(
         ActionInterface $action,
         $result
-    )
-    {
+    ) {
         $data = [
             'controller_action' => $action,
             'result' => $result

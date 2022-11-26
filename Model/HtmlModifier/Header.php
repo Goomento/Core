@@ -23,6 +23,7 @@ class Header implements ModifierInterface
     {
         $data = (string) $data;
         if (!empty($data)) {
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
             ob_start();
             HooksHelper::doAction('header');
             $header = ob_get_clean();

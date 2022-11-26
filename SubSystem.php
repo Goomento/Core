@@ -113,7 +113,7 @@ class SubSystem implements SubSystemInterface
                 return true;
             } elseif (in_array($currentState, ['adminhtml', 'frontend']) && isset($scopes[$currentState])) {
                 return true;
-            } elseif (isset($scopes[$fullActionName]))   {
+            } elseif (isset($scopes[$fullActionName])) {
                 return true;
             }
         }
@@ -144,7 +144,6 @@ class SubSystem implements SubSystemInterface
     {
         return ['*'];
     }
-
 
     /**
      * Shutdown the program

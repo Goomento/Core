@@ -12,6 +12,7 @@ use Goomento\Core\Model\Transport;
 use Goomento\Core\Traits\TraitStaticInstances;
 use Goomento\Core\Model\HookManager;
 
+// phpcs:disable Magento2.Functions.StaticFunction.StaticFunction
 class HooksHelper
 {
     use TraitStaticInstances;
@@ -53,8 +54,7 @@ class HooksHelper
         string $tag,
         $callbackToAdd,
         int $sortOrder = 10
-    )
-    {
+    ) {
         /** @var HookManager $instance */
         $instance = self::getInstance(HookManager::class);
         return $instance->addFilter($tag, $callbackToAdd, $sortOrder);

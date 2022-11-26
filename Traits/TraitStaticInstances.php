@@ -10,6 +10,7 @@ namespace Goomento\Core\Traits;
 
 use Magento\Framework\App\ObjectManager;
 
+// phpcs:disable Magento2.Functions.StaticFunction.StaticFunction
 trait TraitStaticInstances
 {
     /**

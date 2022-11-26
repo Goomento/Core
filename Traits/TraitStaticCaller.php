@@ -10,6 +10,7 @@ namespace Goomento\Core\Traits;
 
 use Magento\Framework\App\ObjectManager;
 
+// phpcs:disable Magento2.Functions.StaticFunction.StaticFunction
 trait TraitStaticCaller
 {
     /**
@@ -40,5 +41,5 @@ trait TraitStaticCaller
     /**
      * @return object|string
      */
-    abstract static protected function getStaticInstance();
+    abstract protected static function getStaticInstance();
 }

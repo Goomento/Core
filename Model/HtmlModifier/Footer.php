@@ -23,6 +23,7 @@ class Footer implements ModifierInterface
     {
         $data = (string) $data;
         if (!empty($data)) {
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
             ob_start();
             HooksHelper::doAction('footer');
             $footer = ob_get_clean();

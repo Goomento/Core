@@ -31,8 +31,7 @@ class HtmlModifier implements ModifierInterface
     public function __construct(
         ObjectManagerInterface $objectManager,
         array $modifiers = []
-    )
-    {
+    ) {
         $this->objectManager = $objectManager;
         if (!isset($modifiers['body_classes'])) {
             $modifiers['body_classes'] = HtmlModifier\BodyClasses::class;

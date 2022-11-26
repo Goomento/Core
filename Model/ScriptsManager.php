@@ -76,37 +76,31 @@ class ScriptsManager extends AssetDependencies
      *
      *
      * @param string $handle The script's registered handle.
-     * @param bool   $echo   Optional. Whether to echo the extra script instead of just returning it.
-     *                       Default true.
-     * @return bool|string|void Void if no data exists, extra scripts if `$echo` is true, true otherwise.
      */
-    public function printExtraScript($handle, $echo = true)
+    public function printExtraScript(string $handle) : void
     {
         $output = $this->getData($handle, 'data');
-        if (! $output) {
+        if (!$output) {
             return;
         }
 
-        if (! $echo) {
-            return $output;
-        }
-
-        echo "<script{$this->typeAttr}>\n";
+        $html = "<script{$this->typeAttr}>\n";
 
         // CDATA is not needed for HTML 5.
         if ($this->typeAttr) {
-            echo "/* <![CDATA[ */\n";
+            $html .= "/* <![CDATA[ */\n";
         }
 
-        echo "$output\n";
+        $html = "$output\n";
 
         if ($this->typeAttr) {
-            echo "/* ]]> */\n";
+            $html .= "/* ]]> */\n";
         }
 
-        echo "</script>\n";
+        $html = "</script>\n";
 
-        return true;
+        // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
+        echo $html;
     }
 
     /**
@@ -183,18 +177,21 @@ class ScriptsManager extends AssetDependencies
         $hasConditionalData = $conditional && $this->getData($handle, 'data');
 
         if ($hasConditionalData) {
+            // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
             echo $condBefore;
         }
 
         $this->printExtraScript($handle);
 
         if ($hasConditionalData) {
+            // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
             echo $condAfter;
         }
 
         // A single item may alias a set of items, by having dependencies, but no source.
         if (!$src) {
             if ($inlineScriptTag) {
+                // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
                 echo $inlineScriptTag;
             }
 
@@ -224,6 +221,7 @@ class ScriptsManager extends AssetDependencies
          */
         $tag = HooksHelper::applyFilters('script_loader_tag', $tag, $handle, $src)->getResult();
 
+        // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
         echo $tag;
 
         return true;
@@ -275,6 +273,7 @@ class ScriptsManager extends AssetDependencies
         $output = trim(implode("\n", $output), "\n");
 
         if ($echo) {
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
             printf("<script%s>\n%s\n</script>\n", $this->typeAttr, $output);
         }
 
@@ -369,6 +368,7 @@ class ScriptsManager extends AssetDependencies
                 }
             }
             $jsonVariable = json_encode($config);
+            // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
             printf("<script>(function(require){(function() {require.config(%s)})();})(require)</script>", $jsonVariable);
         }
     }

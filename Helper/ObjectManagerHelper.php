@@ -10,6 +10,7 @@ namespace Goomento\Core\Helper;
 
 use Goomento\Core\Traits\TraitStaticInstances;
 
+// phpcs:disable Magento2.Functions.StaticFunction.StaticFunction
 class ObjectManagerHelper
 {
     use TraitStaticInstances;

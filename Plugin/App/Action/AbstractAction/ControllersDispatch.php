@@ -36,8 +36,7 @@ class ControllersDispatch
     public function beforeDispatch(
         AbstractAction $subject,
         RequestInterface $request
-    )
-    {
+    ) {
         $data = [
             'controller_action' => $subject,
             'request' => $request
@@ -53,8 +52,7 @@ class ControllersDispatch
     public function afterDispatch(
         AbstractAction $subject,
         $result
-    )
-    {
+    ) {
         $data = [
             'controller_action' => $subject,
             'result' => $result
