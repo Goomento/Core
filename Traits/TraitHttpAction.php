@@ -23,6 +23,16 @@ trait TraitHttpAction
     use TraitStaticInstances;
 
     /**
+     * @var int
+     */
+    private $responseDataStatusCode = 200;
+
+    /**
+     * @var array
+     */
+    private $responseDataData = [];
+
+    /**
      * @return RequestInterface
      */
     public function getRequest()
@@ -55,13 +65,6 @@ trait TraitHttpAction
      */
     protected function getResponseData()
     {
-        if (!isset($this->responseDataStatusCode)) {
-            $this->responseDataStatusCode = 200;
-        }
-        if (!isset($this->responseDataData)) {
-            $this->responseDataData = [];
-        }
-
         return [
             'status_code' => $this->responseDataStatusCode,
             'data' => $this->responseDataData,
@@ -74,7 +77,6 @@ trait TraitHttpAction
      */
     protected function setResponseData($data)
     {
-        $this->getResponseData();
         if (isset($data['status_code']) || isset($data['data'])) {
             if (isset($data['status_code'])) {
                 $this->responseDataStatusCode = $data['status_code'];
