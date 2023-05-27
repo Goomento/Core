@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ALL */
 /**
  * @package Goomento_Core
  * @link https://github.com/Goomento/Core

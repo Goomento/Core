@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ALL */
 /**
  * @package Goomento_Core
  * @link https://github.com/Goomento/Core
@@ -10,8 +10,11 @@ namespace Goomento\Core\Model;
 
 use Goomento\Core\Helper\HooksHelper;
 
+// phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
+// phpcs:disable Magento2.Security.LanguageConstruct.DirectOutput
 class ScriptsManager extends AssetDependencies
 {
+
     /**
      * Holds handles of scripts which are enqueued in footer.
      *
@@ -27,12 +30,12 @@ class ScriptsManager extends AssetDependencies
      *
      * @var string
      */
-    private $typeAttr = '';
+    private $typeAttr = ' type="text/javascript"';
 
     /**
      * @var null
      */
-    protected $requiredConfig;
+    private $requiredConfig;
 
     /**
      * @var array
@@ -99,7 +102,6 @@ class ScriptsManager extends AssetDependencies
 
         $html = "</script>\n";
 
-        // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
         echo $html;
     }
 
@@ -129,7 +131,7 @@ class ScriptsManager extends AssetDependencies
      * @param int|false $group  Optional. Group level: (int) level, (false) no groups. Default false.
      * @return bool True on success, false on failure.
      */
-    public function doItem($handle, $group = false): bool
+    public function doItem(string $handle, $group = false): bool
     {
         if (! parent::doItem($handle)) {
             return false;
@@ -177,21 +179,18 @@ class ScriptsManager extends AssetDependencies
         $hasConditionalData = $conditional && $this->getData($handle, 'data');
 
         if ($hasConditionalData) {
-            // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
             echo $condBefore;
         }
 
         $this->printExtraScript($handle);
 
         if ($hasConditionalData) {
-            // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
             echo $condAfter;
         }
 
         // A single item may alias a set of items, by having dependencies, but no source.
         if (!$src) {
             if ($inlineScriptTag) {
-                // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
                 echo $inlineScriptTag;
             }
 
@@ -207,7 +206,7 @@ class ScriptsManager extends AssetDependencies
             }
             $requireJs[] = $handle;
             $requireJs = implode('\',\'', $requireJs);
-            $tag .= sprintf("<script>require(['%s'])</script>", $requireJs);
+            $tag .= sprintf("<script%s>gmtRequire(['%s'])</script>", $this->typeAttr, $requireJs);
         }
 
         $tag .= $afterHandle . $condAfter;
@@ -221,7 +220,6 @@ class ScriptsManager extends AssetDependencies
          */
         $tag = HooksHelper::applyFilters('script_loader_tag', $tag, $handle, $src)->getResult();
 
-        // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
         echo $tag;
 
         return true;
@@ -273,7 +271,6 @@ class ScriptsManager extends AssetDependencies
         $output = trim(implode("\n", $output), "\n");
 
         if ($echo) {
-            // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
             printf("<script%s>\n%s\n</script>\n", $this->typeAttr, $output);
         }
 
@@ -289,7 +286,7 @@ class ScriptsManager extends AssetDependencies
      * @return bool Not already in the group or a lower group
      *
      */
-    public function setGroup($handle, $recursion, $group = false)
+    public function setGroup(string $handle, bool $recursion, $group) : bool
     {
         if (isset($this->registered[ $handle ]->args) && $this->registered[ $handle ]->args === 1) {
             $grp = 1;
@@ -312,10 +309,10 @@ class ScriptsManager extends AssetDependencies
      * @param int|false $group     Optional. Group level: (int) level, (false) no groups. Default false.
      * @return bool True on success, false on failure.
      */
-    public function allDeps($handles, $recursion = false, $group = false)
+    public function allDeps($handles, $recursion = false, $group = false) : bool
     {
         $r = parent::allDeps($handles, $recursion, $group);
-        if (! $recursion) {
+        if (!$recursion) {
             $this->toDo = HooksHelper::applyFilters('print_scripts_array', $this->toDo)->getResult();
         }
         return $r;
@@ -350,7 +347,7 @@ class ScriptsManager extends AssetDependencies
      */
     public function printRequireConfig()
     {
-        if (is_null($this->requiredConfig)) {
+        if (null === $this->requiredConfig) {
             $this->requiredConfig = [];
             $config = ['paths' => [], 'shim' => []];
             foreach ($this->registered as $item) {
@@ -368,8 +365,10 @@ class ScriptsManager extends AssetDependencies
                 }
             }
             $jsonVariable = json_encode($config);
-            // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
-            printf("<script>(function(require){(function() {require.config(%s)})();})(require)</script>", $jsonVariable);
+
+            printf('<script%s>!function(e){var t="require",r=()=>!(!e[t]||!e[t].config),l=n=>"function"==typeof n[0]?n[0]():e[t].apply(null,n);const i=[];if(!r()){let e=0,t=setInterval(()=>{if(r())for(clearInterval(t);i.length;){var n=i.shift();l(n)}1000<e&&clearInterval(t),++e},100)}e.gmtRequire=function(){var n=arguments;!r()||0<i.length?i.push(n):l(n)}}(window);</script>', $this->typeAttr);
+
+            printf('<script%s>gmtRequire(() => {require.config(%s)})</script>', $this->typeAttr, $jsonVariable);
         }
     }
 }

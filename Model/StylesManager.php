@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ALL */
 /**
  * @package Goomento_Core
  * @link https://github.com/Goomento/Core
@@ -10,17 +10,10 @@ namespace Goomento\Core\Model;
 
 use Goomento\Core\Helper\HooksHelper;
 
+// phpcs:disable Magento2.Security.LanguageConstruct.DirectOutput
+// phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
 class StylesManager extends AssetDependencies
 {
-    /**
-     * Base URL for styles.
-     *
-     * Full URL with trailing slash.
-     *
-     * @var string
-     */
-    private $baseUrl;
-
     /**
      * The current text direction.
      *
@@ -29,21 +22,10 @@ class StylesManager extends AssetDependencies
     private $textDirection = 'ltr';
 
     /**
-     * List of default directories.
-     *
-     * @var array
-     */
-    private $defaultDirs;
-
-    /**
-     * Holds a string which contains the type attribute for style tag.
-     *
-     * If the current theme does not declare HTML5 support for 'style',
-     * then it initializes as `type='text/css'`.
      *
      * @var string
      */
-    private $typeAttr = '';
+    private $typeAttr = ' type="text/css"';
 
     /**
      * Processes a style dependency.
@@ -51,7 +33,7 @@ class StylesManager extends AssetDependencies
      * @param string $handle The style's registered handle.
      * @return bool True on success, false on failure.
      */
-    public function doItem($handle, $group = false)
+    public function doItem(string $handle, $group = false) : bool
     {
         if (! parent::doItem($handle)) {
             return false;
@@ -101,7 +83,6 @@ class StylesManager extends AssetDependencies
         // A single item may alias a set of items, by having dependencies, but no source.
         if (! $src) {
             if ($inlineStyleTag) {
-                // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
                 echo $inlineStyleTag;
             }
 
@@ -163,12 +144,9 @@ class StylesManager extends AssetDependencies
             }
         }
 
-        // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
         echo $condBefore;
-        // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
         echo $tag;
         $this->printInlineStyle($handle);
-        // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput
         echo $condAfter;
 
         return true;
@@ -220,7 +198,6 @@ class StylesManager extends AssetDependencies
             return $output;
         }
 
-        // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
         printf(
             "<style id='%s-inline-css'%s>\n%s\n</style>\n",
             $handle,
@@ -239,7 +216,7 @@ class StylesManager extends AssetDependencies
      * @param int|false $group     Group level: (int) level, (false) no groups.
      * @return bool True on success, false on failure.
      */
-    public function allDeps($handles, $recursion = false, $group = false)
+    public function allDeps($handles, $recursion = false, $group = false) : bool
     {
         $r = parent::allDeps($handles, $recursion, $group);
         if (! $recursion) {
@@ -261,10 +238,6 @@ class StylesManager extends AssetDependencies
      */
     public function _cssHref($src, $ver, $handle)
     {
-        if (! is_bool($src) && ! preg_match('|^(https?:)?//|', $src)) {
-            $src = $this->baseUrl . $src;
-        }
-
         if ($ver) {
             $src = $src . '?v=' . $ver;
         }
@@ -276,26 +249,6 @@ class StylesManager extends AssetDependencies
          * @param string $handle The style's registered handle.
          */
         return HooksHelper::applyFilters('style_loader_src', $src, $handle)->getResult();
-    }
-
-    /**
-     * Whether a handle's source is in a default directory.
-     *
-     * @param string $src The source of the enqueued style.
-     * @return bool True if found, false if not.
-     */
-    public function inDefaultDir($src)
-    {
-        if (! $this->defaultDirs) {
-            return true;
-        }
-
-        foreach ((array) $this->defaultDirs as $test) {
-            if (0 === strpos($src, $test)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

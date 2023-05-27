@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ALL */
 /**
  * @package Goomento_Core
  * @link https://github.com/Goomento/Core
@@ -10,8 +10,8 @@ namespace Goomento\Core\Model;
 
 use ArrayAccess;
 use Iterator;
-use ReflectionFunction;
 
+// phpcs:disable Magento2.Functions.DiscouragedFunction.Discouraged
 class Hook implements Iterator, ArrayAccess
 {
     /**
@@ -76,9 +76,13 @@ class Hook implements Iterator, ArrayAccess
 
     /**
      * Hooks a function or method to a specific filter action.
+     * @param string $tag
+     * @param $functionToAdd
+     * @param int $priority
      * @return Transport
+     * @throws \ReflectionException
      */
-    public function addFilter(string $tag, $functionToAdd, int $priority)
+    public function addFilter(string $tag, $functionToAdd, int $priority): Transport
     {
         $idx = $this->uniqueId($tag, $functionToAdd, $priority);
         $priorityExisted = isset($this->callbacks[$priority]);
@@ -174,9 +178,9 @@ class Hook implements Iterator, ArrayAccess
      * @param callable $functionToRemove The callback to be removed from running when the filter is applied.
      * @param int $priority The exact priority used when adding the original filter callback.
      * @return bool Whether the callback existed before it was removed.
-     *
+     * @throws \ReflectionException
      */
-    public function removeFilter(string $tag, callable $functionToRemove, int $priority)
+    public function removeFilter(string $tag, callable $functionToRemove, int $priority) : bool
     {
         $functionKey = $this->uniqueId($tag, $functionToRemove, $priority);
 
@@ -200,6 +204,7 @@ class Hook implements Iterator, ArrayAccess
      *                                         the callback ID when SPL is not available. Default empty.
      * @param callable|bool $functionToCheck Optional. The callback to check for. Default false.
      * @return bool|int The priority of that hook is returned, or false if the function is not attached.
+     * @throws \ReflectionException
      */
     public function hasFilter(string $tag = '', $functionToCheck = false)
     {
@@ -264,7 +269,7 @@ class Hook implements Iterator, ArrayAccess
      * Build Unique ID for storage and retrieval.
      * @throws \ReflectionException
      */
-    private function uniqueId(string $tag, $function, $priority)
+    private function uniqueId(string $tag, $function, $priority) : ?string
     {
         $keys = [];
         if (is_string($function)) {
@@ -343,15 +348,12 @@ class Hook implements Iterator, ArrayAccess
                     $args[0] = $value;
                 }
 
-                // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
                 $value = call_user_func($the_['function'], ...$args);
 
                 if ($value === null) { // Return void
                     $value = $transport->getData('_value');
                 } else {
-                    // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
                     $valueType = gettype($value);
-                    // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
                     $resultType = gettype($transport->getResult());
 
                     $transport->setResult($value);
@@ -401,7 +403,6 @@ class Hook implements Iterator, ArrayAccess
         do {
             $priority = current($this->iterations[$nestingLevel]);
             foreach ($this->callbacks[$priority] as $the_) {
-                // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
                 call_user_func($the_['function'], ...$args);
             }
         } while (false !== next($this->iterations[$nestingLevel]));

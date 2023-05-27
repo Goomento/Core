@@ -30,8 +30,9 @@ class HookManager
      * @param $functionToAdd
      * @param int $priority
      * @return Transport
+     * @throws \ReflectionException
      */
-    public function addFilter($tag, $functionToAdd, int $priority = 10): Transport
+    public function addFilter($tag, $functionToAdd, int $priority = 10) : Transport
     {
         if (! isset($this->hooks[ $tag ])) {
             $this->hooks[ $tag ] = new Hook();
@@ -73,6 +74,7 @@ class HookManager
      * @param callable|null $functionToRemove
      * @param int $priority
      * @return bool
+     * @throws \ReflectionException
      */
     public function removeFilter($tag, $functionToRemove = null, int $priority = 10): bool
     {

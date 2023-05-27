@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ALL */
 /**
  * @package Goomento_Core
  * @link https://github.com/Goomento/Core
@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Goomento\Core\Model;
 
+// phpcs:disable Magento2.CodeAnalysis.EmptyBlock.DetectedFunction
 abstract class AssetDependencies
 {
     /**
@@ -52,12 +53,6 @@ abstract class AssetDependencies
     protected $groups = [];
 
     /**
-     * @var HookManager
-     * @deprecated
-     */
-    protected $hookManager;
-
-    /**
      * ScriptsManager constructor.
      */
     public function __construct()
@@ -68,7 +63,7 @@ abstract class AssetDependencies
     /**
      * Init the asset
      */
-    protected function init() // phpcs:ignore Magento2.CodeAnalysis.EmptyBlock.DetectedFunction
+    protected function init()
     {
     }
 
@@ -106,7 +101,7 @@ abstract class AssetDependencies
      * @param string $handle Name of the item. Should be unique.
      * @return bool True on success, false if not set.
      */
-    public function doItem($handle, $group = false)
+    public function doItem(string $handle, $group = false): bool
     {
         return isset($this->registered[ $handle ]);
     }
@@ -123,7 +118,7 @@ abstract class AssetDependencies
      * @param int|false $group     Group level: (int) level, (false) no groups.
      * @return bool True on success, false on failure.
      */
-    public function allDeps($handles, $recursion = false, $group = false)
+    public function allDeps($handles, $recursion = false, $group = false) : bool
     {
         $handles = (array) $handles;
         if (! $handles) {
@@ -341,7 +336,7 @@ abstract class AssetDependencies
      * @param mixed  $group     Group level.
      * @return bool Not already in the group or a lower group
      */
-    public function setGroup($handle, $recursion, $group)
+    public function setGroup(string $handle, bool $recursion, $group) : bool
     {
         $group = (int) $group;
 
