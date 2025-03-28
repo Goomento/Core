@@ -366,9 +366,25 @@ class ScriptsManager extends AssetDependencies
             }
             $jsonVariable = json_encode($config);
 
-            printf('<script%s>!function(e){var t="require",r=()=>!(!e[t]||!e[t].config),l=n=>"function"==typeof n[0]?n[0]():e[t].apply(null,n);const i=[];if(!r()){let e=0,t=setInterval(()=>{if(r())for(clearInterval(t);i.length;){var n=i.shift();l(n)}1000<e&&clearInterval(t),++e},100)}e.gmtRequire=function(){var n=arguments;!r()||0<i.length?i.push(n):l(n)}}(window);</script>', $this->typeAttr);
+            $this->secureRenderScript(sprintf('!function(e){var t="require",r=()=>!(!e[t]||!e[t].config),l=n=>"function"==typeof n[0]?n[0]():e[t].apply(null,n);const i=[];if(!r()){let e=0,t=setInterval(()=>{if(r())for(clearInterval(t);i.length;){var n=i.shift();l(n)}1000<e&&clearInterval(t),++e},100)}e.gmtRequire=function(){var n=arguments;!r()||0<i.length?i.push(n):l(n)}}(window);', $jsonVariable));
 
-            printf('<script%s>gmtRequire(() => {require.config(%s)})</script>', $this->typeAttr, $jsonVariable);
+            $this->secureRenderScript(sprintf('gmtRequire(() => {require.config(%s)})', $jsonVariable));
         }
+    }
+
+    /**
+     * @param string $content
+     * @return void
+     */
+    private function secureRenderScript(string $content)
+    {
+        $nonce = '';
+        if (class_exists('Magento\Csp\Helper\CspNonceProvider')) {
+            /** @var \Magento\Csp\Helper\CspNonceProvider $nonceProvider */
+            $nonceProvider = \Goomento\Core\Helper\ObjectManagerHelper::get('Magento\Csp\Helper\CspNonceProvider');
+            $nonce = sprintf(' nonce="%s"', $nonceProvider->generateNonce());
+        }
+
+        printf('<script%s>%s</script>', $this->typeAttr . $nonce, $content);
     }
 }
